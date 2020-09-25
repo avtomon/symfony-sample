@@ -1,0 +1,47 @@
+# Codeception Test Suite Configuration
+#
+# Suite for acceptance tests.
+# Perform tests in browser using the WebDriver or PhpBrowser.
+# If you need both WebDriver and PHPBrowser tests - create a separate suite.
+
+actor: AcceptanceTester
+extensions:
+    enabled:
+        - Extension\DatabaseMigrationExtension
+modules:
+    enabled:
+        #        - REST:
+        #            url: 'http://billing.test.qooiz-develop.me/api/v1/'
+        #            depends: Symfony
+        #        - PhpBrowser:
+        #            url: http://billing-web:81/
+        #        - \Helper\WMREST:
+        #            depends: PhpBrowser
+        #            url: http://billing-web:81/api/v1/
+        - \Helper\Acceptance
+        - Cli
+        -   Db:
+                dsn: 'pgsql:host=/var/run/postgresql/;port=5432;dbname=test_main'
+                user: 'postgres'
+                password: 'postgres'
+        -   Symfony:
+                app_path: 'app'
+                environment: 'test'
+        -   PhpBrowser:
+                url: "%TEST_URL%/api/v1/"
+                auth: ['admin', '81lj54ewv9']
+        -   \Helper\WMREST:
+                url: "%TEST_URL%/api/v1/"
+                depends: PhpBrowser
+
+params:
+    - .env
+
+#env:
+#    ci:
+#        modules:
+#            config:
+#                PhpBrowser:
+#                    url: http://127.0.0.1:8000/
+#                \Helper\WMREST:
+#                    url: http://127.0.0.1:8000/api/v1/

@@ -1,0 +1,32 @@
+# Codeception Test Suite Configuration
+#
+# Suite for functional tests
+# Emulate web requests and make application process them
+# Include one of framework modules (Symfony2, Yii2, Laravel5) to use it
+# Remove this suite if you don't use frameworks
+
+actor: FunctionalTester
+extensions:
+    enabled:
+        - Extension\DatabaseMigrationExtension
+modules:
+    enabled:
+        - Asserts
+        - \Helper\Functional
+        - Cli
+        -   Db:
+                dsn: 'pgsql:host=/var/run/postgresql/;port=5432;dbname=test_main'
+                user: 'postgres'
+                password: 'postgres'
+        -   Symfony:
+                app_path: 'app'
+                environment: 'test'
+        -   PhpBrowser:
+                url: "%TEST_URL%/api/v1/"
+                auth: ['admin', '81lj54ewv9']
+        -   \Helper\WMREST:
+                url: "%TEST_URL%/api/v1/"
+                depends: PhpBrowser
+
+params:
+    - .env

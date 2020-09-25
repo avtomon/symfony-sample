@@ -1,0 +1,14 @@
+# Codeception Test Suite Configuration
+#
+# Suite for unit or integration tests.
+
+actor: UnitTester
+modules:
+    enabled:
+        - Asserts
+        - \Helper\Unit
+        - Cli
+        -   Db:
+                dsn: 'pgsql:host=/var/run/postgresql/;port=5432;dbname=test_main'
+                user: 'postgres'
+                password: 'postgres'
