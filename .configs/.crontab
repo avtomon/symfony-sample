@@ -1,0 +1,10 @@
+# This fail was created automatically by deploy script
+# Any direct changes will be deleted during next deploy process
+# All lines should have following format
+# m h  dom mon dow  user command
+#
+# for example
+# 0 1 * * * www-data ls -l /var/www > /var/www/ls.log
+
+
+0 * * * * www-data php /var/www/billing/bin/console app:update-currency-rate

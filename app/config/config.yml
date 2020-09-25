@@ -1,0 +1,114 @@
+# Put parameters here that don't need to change on each machine where the app is deployed
+# https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
+parameters:
+    redis_default_dsn: '%env(REDIS_DEFAULT_DSN)%'
+    redis_session_dsn: '%env(REDIS_SESSION_DSN)%'
+    database_host: '%env(DATABASE_HOST)%'
+    database_port: '%env(DATABASE_PORT)%'
+    database_name: '%env(DATABASE_NAME)%'
+    database_user: '%env(DATABASE_USER)%'
+    database_password: '%env(DATABASE_PASSWORD)%'
+    #    mailer_transport: '%env(MAILER_TRANSPORT)%'
+    #    mailer_host: '%env(MAILER_HOST)%'
+    #    mailer_user: '%env(MAILER_USER)%'
+    #    mailer_password: '%env(MAILER_PASSWORD)%'
+    secret: '%env(SECRET_KEY)%'
+    locale: ru
+
+    version: '%env(VERSION)%'
+
+imports:
+    - { resource: security.yml }
+    - { resource: services.yml }
+
+framework:
+    #esi: ~
+    #translator: { fallbacks: ['%locale%'] }
+    secret: '%secret%'
+    router:
+        resource: '%kernel.project_dir%/config/routing.yml'
+        strict_requirements: ~
+    form: ~
+    csrf_protection: ~
+    validation: { enable_annotations: true }
+    serializer:
+        enable_annotations: true
+        name_converter: 'serializer.name_converter.camel_case_to_snake_case'
+    default_locale: '%locale%'
+    trusted_hosts: ~
+    session:
+        # https://symfony.com/doc/current/reference/configuration/framework.html#handler-id
+        storage_id: session.storage.mock_array
+    fragments: ~
+    http_method_override: true
+    assets: ~
+    php_errors:
+        log: true
+
+sensio_framework_extra:
+    router:      { annotations: false }
+    request:     { converters: true, auto_convert: true }
+    view:        { annotations: true }
+    cache:       { annotations: true }
+    security:    { annotations: true }
+    psr_message: { enabled: false } # Defaults to true if the PSR-7 bridge is installed
+
+# Twig Configuration
+twig:
+    debug: '%kernel.debug%'
+    strict_variables: '%kernel.debug%'
+    cache: false
+
+# Doctrine Configuration
+doctrine:
+    dbal:
+        driver: pdo_pgsql
+        host: '%database_host%'
+        port: '%database_port%'
+        dbname: '%database_name%'
+        user: '%database_user%'
+        password: '%database_password%'
+        charset: UTF8
+        persistent: true
+        mapping_types:
+            balance_account_types_enum: string
+            transaction_token_types_enum: string
+
+    orm:
+        auto_generate_proxy_classes: '%kernel.debug%'
+        naming_strategy: doctrine.orm.naming_strategy.underscore
+        auto_mapping: true
+        dql:
+            string_functions:
+                JSON_EXTRACT_PATH: Syslogic\DoctrineJsonFunctions\Query\AST\Functions\Postgresql\JsonExtractPath
+                JSON_GET_TEXT: Syslogic\DoctrineJsonFunctions\Query\AST\Functions\Postgresql\JsonGetText
+                MD5:            Oro\ORM\Query\AST\Functions\SimpleFunction
+                GROUP_CONCAT:   Oro\ORM\Query\AST\Functions\String\GroupConcat
+                CONCAT_WS:      Oro\ORM\Query\AST\Functions\String\ConcatWs
+                CAST:           Oro\ORM\Query\AST\Functions\Cast
+                REPLACE:        Oro\ORM\Query\AST\Functions\String\Replace
+                DATE_FORMAT:    Oro\ORM\Query\AST\Functions\String\DateFormat
+# Swiftmailer Configuration
+#swiftmailer:
+#    transport: '%mailer_transport%'
+#    host: '%mailer_host%'
+#    username: '%mailer_user%'
+#    password: '%mailer_password%'
+#    spool: { type: memory }
+
+snc_redis:
+    clients:
+        default:
+            type: phpredis
+            alias: default
+            dsn: '%env(REDIS_DEFAULT_DSN)%'
+        session:
+            type: phpredis
+            alias: session
+            dsn: '%env(REDIS_SESSION_DSN)%'
+    session:
+        client: session
+
+stored_procedure:
+    debug: '%kernel.debug%'
+    version: '%version%'
